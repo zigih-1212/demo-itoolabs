@@ -1,0 +1,137 @@
+// ============================================================================
+// Миксины и хелперы SCSS
+// ----------------------------------------------------------------------------
+// Миксин — это переиспользуемый кусок CSS с параметрами. Вместо того чтобы
+// копировать медиа-запросы и обнуления по всему проекту, мы описываем их
+// один раз здесь и подключаем через @include.
+// ============================================================================
+
+@use 'sass:map';
+@use 'tokens' as *;
+
+// Ре-экспорт переменных (цвета, размеры, отступы) для компонентов, которые
+// подключают только миксины. Так каждый .vue может писать
+// `@use '@/styles/mixins' as *;` и получать сразу и миксины, и токены — без
+// дублирующего второго @use.
+@forward 'tokens';
+
+// Карта точек останова: имя → ширина. Удобно перебирать и вызывать в up/down.
+$breakpoints: (
+  'sm': $breakpoint-sm,
+  'md': $breakpoint-md,
+  'lg': $breakpoint-lg,
+  'xl': $breakpoint-xl,
+);
+
+// --- Адаптивная вёрстка -----------------------------------------------------
+// min-width: «от такого-то размера и шире». Mobile-first подход:
+// базовые стили для телефона, расширения — внутри @include up('md').
+@mixin up($name) {
+  $width: map.get($breakpoints, $name);
+
+  @if $width {
+    @media (min-width: $width) {
+      @content;
+    }
+  } @else {
+    @error "Неизвестная точка останова: #{$name}";
+  }
+}
+
+// max-width: «до такого-то размера». Нужен редко, когда правило пишется
+// «сверху вниз» (например, десктопный сайдбар упрощается на мобильном).
+@mixin down($name) {
+  $width: map.get($breakpoints, $name);
+
+  @if $width {
+    @media (max-width: #{$width - 1px}) {
+      @content;
+    }
+  } @else {
+    @error "Неизвестная точка останова: #{$name}";
+  }
+}
+
+// --- Обрезка текста ---------------------------------------------------------
+// Однострочное многоточие.
+@mixin truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// Многострочное многоточие (-webkit-line-clamp работает во всех современных
+// браузерах, включая Firefox 68+).
+@mixin line-clamp($lines) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// --- Доступность ------------------------------------------------------------
+// Видимый фокус только для клавиатуры (:focus-visible), чтобы мышью интерфейс
+// не «мигал» обводками. Это требование WCAG 2.2 (видимый фокус).
+@mixin focus-ring($color: $color-primary-500) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: 2px;
+  }
+}
+
+// Скрывает элемент визуально, но оставляет его для скринридеров.
+// Классический приём: label без текста, но доступный для озвучки.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// --- Раскладки --------------------------------------------------------------
+// Флекс-хелперы: заметно сокращают шаблонный код.
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// Карточка — базовый поверхностный контейнер интерфейса.
+@mixin card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+// Скроллбар в фирменных цветах. Аккуратен в Chrome/Edge/Safari.
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-neutral-300;
+    border-radius: $radius-full;
+
+    &:hover {
+      background: $color-neutral-400;
+    }
+  }
+}

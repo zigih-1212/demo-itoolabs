@@ -1,0 +1,140 @@
+// ============================================================================
+// Глобальные (базовые) стили
+// ----------------------------------------------------------------------------
+// Здесь живёт CSS Reset и настройки тегов на уровне всего документа:
+// шрифт, цвет фона, базовая типографика. Всё остальное — в компонентах.
+// ============================================================================
+
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  // Плавный скролл и корректный размер шрифта при масштабировании.
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-text;
+  background: $color-bg;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Уважаем системную настройку «уменьшить анимацию»: пользователи с
+// вестибулярными расстройствами не должны страдать от резких переходов.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  color: $color-neutral-900;
+}
+
+a {
+  color: $color-primary-600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+// Единый видимый фокус для всех интерактивных элементов — требование a11y.
+:focus-visible {
+  outline: 2px solid $color-primary-500;
+  outline-offset: 2px;
+}
+
+// Класс-утилита для скринридеров.
+.visually-hidden {
+  @include visually-hidden;
+}
+
+// Общий скроллбар приложения.
+body {
+  @include custom-scrollbar;
+}
+
+// Ссылка «Перейти к содержимому» для клавиатурных пользователей:
+// первым Tab-ом фокус попадает на неё, что позволяет пропустить навигацию.
+.skip-link {
+  position: absolute;
+  left: $space-4;
+  top: -100px;
+  z-index: $z-toast;
+  padding: $space-3 $space-4;
+  background: $color-primary-600;
+  color: $color-text-inverse;
+  border-radius: $radius-md;
+  transition: top $transition-fast;
+
+  &:focus {
+    top: $space-4;
+  }
+}

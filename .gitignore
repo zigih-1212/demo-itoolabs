@@ -1,0 +1,41 @@
+# --- Зависимости ---
+node_modules/
+.pnp
+.pnp.js
+
+# --- Артефакты сборки ---
+dist/
+build/
+*.tsbuildinfo
+
+# --- Переменные окружения и секреты ---
+# .env.example — это шаблон, его мы храним в репозитории.
+# А сам .env с реальными секретами — никогда.
+.env
+.env.local
+.env.*.local
+
+# --- База данных SQLite ---
+# Файлы БД создаются локально и не должны попадать в git.
+*.sqlite
+*.sqlite3
+*.db
+data/*.sqlite*
+
+# --- Логи ---
+logs/
+*.log
+npm-debug.log*
+
+# --- Кэши инструментов ---
+.vite/
+.eslintcache
+coverage/
+
+# --- Редакторы и ОС ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db

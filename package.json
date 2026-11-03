@@ -1,0 +1,37 @@
+{
+  "name": "voxdesk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VoxDesk — облачная АТС и колл-центр для B2B. Полноценный демонстрационный fullstack-проект.",
+  "license": "MIT",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm --workspace backend run dev",
+    "dev:web": "npm --workspace frontend run dev",
+    "build": "npm --workspace backend run build && npm --workspace frontend run build",
+    "test": "npm --workspace backend run test",
+    "lint": "npm --workspace backend run lint && npm --workspace frontend run lint",
+    "typecheck": "npm --workspace backend run typecheck && npm --workspace frontend run typecheck",
+    "db:migrate": "npm --workspace backend run db:migrate",
+    "db:seed": "npm --workspace backend run db:seed",
+    "db:reset": "npm --workspace backend run db:reset",
+    "setup": "npm install && npm run db:migrate && npm run db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "esbuild@0.21.5": true,
+    "esbuild@0.25.12": true,
+    "vue-demi@0.14.10": true,
+    "@parcel/watcher@2.6.0": true
+  }
+}

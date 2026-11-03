@@ -1,0 +1,52 @@
+# Контейнер для запуска только БД не нужен: SQLite — это файл на диске,
+# а не отдельный сервер. Данные хранятся в томе `voxdesk-data`, который
+# сохраняется между перезапусками контейнеров.
+#
+# Подробности о запуске — в README.md в корне проекта.
+
+name: voxdesk
+
+services:
+  # Backend-API: Express + SQLite.
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      # Путь к файлу БД внутри контейнера (совпадает с томом ниже).
+      DATABASE_PATH: /app/data/voxdesk.sqlite
+      CORS_ORIGIN: http://localhost:8080
+      LOG_LEVEL: info
+      # В реальном окружении секреты передаются через .env / секрет-стор,
+      # а не хардкодятся. Здесь — значения по умолчанию для локального запуска.
+      JWT_ACCESS_SECRET: change-me-access-secret-0123456789
+      JWT_REFRESH_SECRET: change-me-refresh-secret-0123456789
+      JWT_ACCESS_TTL: 15m
+      JWT_REFRESH_TTL: 7d
+      BCRYPT_ROUNDS: 10
+      SEED_ADMIN_EMAIL: admin@voxdesk.local
+      SEED_ADMIN_PASSWORD: admin12345
+    volumes:
+      # Именованный том: данные БД переживают пересоздание контейнера.
+      - voxdesk-data:/app/data
+    # Порт наружу не публикуем: доступ к API идёт через nginx фронтенда.
+    expose:
+      - '4000'
+    restart: unless-stopped
+
+  # Frontend: собранная статика, раздаваемая nginx + проксирование /api.
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    depends_on:
+      - backend
+    ports:
+      # Единственный опубликованный порт — сюда заходит пользователь.
+      - '8080:80'
+    restart: unless-stopped
+
+volumes:
+  voxdesk-data:
