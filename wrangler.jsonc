@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "voxdesk",
+  "main": "worker/index.ts",
+  "compatibility_date": "2025-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "voxdesk",
+      "database_id": "0752db7f-aea0-4d27-b17c-73be86aba727"
+    }
+  ],
+  "assets": {
+    "directory": "./frontend/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "vars": {
+    "JWT_ACCESS_SECRET": "demo-access-secret-change-me-0123456789",
+    "JWT_REFRESH_SECRET": "demo-refresh-secret-change-me-9876543210",
+    "JWT_ACCESS_TTL": "15m",
+    "JWT_REFRESH_TTL": "7d",
+    "SEED_ADMIN_EMAIL": "admin@voxdesk.local",
+    "SEED_ADMIN_PASSWORD": "admin12345"
+  }
+}

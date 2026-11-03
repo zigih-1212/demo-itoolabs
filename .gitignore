@@ -32,6 +32,11 @@ npm-debug.log*
 .eslintcache
 coverage/
 
+# --- Cloudflare / Wrangler ---
+# Служебная папка Wrangler и локальное состояние D1 (эмуляция на диске).
+.wrangler/
+.dev.vars
+
 # --- Редакторы и ОС ---
 .idea/
 .vscode/*

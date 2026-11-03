@@ -15,3 +15,4 @@ ADR (Architecture Decision Record) — короткий документ, кот
 | [004](004-zod-validation.md) | Валидация через Zod | Один источник правды для правил и типов |
 | [005](005-jwt-refresh-rotation.md) | JWT + ротация refresh-токенов | Безопасные сессии без хранения пароля |
 | [006](006-scss-design-tokens.md) | SCSS и дизайн-токены | Единый стиль, основа дизайн-системы |
+| [007](007-edge-deployment.md) | Публикация на Cloudflare Workers | Демо-сайт без сервера, база — D1 |

@@ -164,6 +164,8 @@ voxdesk/
 │       ├── utils/           # Форматирование, метки, хелперы
 │       └── views/           # Страницы
 ├── docs/                    # Документация (архитектура, решения, Docker)
+├── worker/                  # Edge-двойник API для Cloudflare (демо-стенд)
+├── wrangler.jsonc           # Конфигурация деплоя на Cloudflare Workers
 ├── docker-compose.yml       # Запуск всего стека в Docker
 └── README.md                # Этот файл
 ```
@@ -171,6 +173,35 @@ voxdesk/
 Ключевая идея backend: **слои**. Запрос проходит путь
 `routes → controller → service → repository → база`. Каждый слой занят своим
 делом (см. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)).
+
+---
+
+## Публичный демо-стенд (Cloudflare)
+
+Живая версия демо развёрнута на **Cloudflare Workers** — это serverless-хостинг,
+который не требует держать свой сервер. Основной backend написан на Node.js +
+`node:sqlite`, а на edge-платформе Node-сервер запустить нельзя, поэтому для
+демо-стенда сделан «edge-двойник» API: та же схема, те же пути и формат ответов,
+но на Cloudflare-технологиях (Worker + база **D1**). Фронтенд при этом не
+меняется вовсе — он просто обращается к `/api/...`.
+
+- **Стенд:** https://voxdesk.dvybornyh332.workers.dev
+- **Демо-доступы:** те же, что и локально (см. раздел «Что есть в приложении»).
+
+Почему так, что это за компромисс и как повторить деплой — в
+[docs/adr/007-edge-deployment.md](docs/adr/007-edge-deployment.md).
+
+Команда для повторного деплоя (из папки `voxdesk`):
+
+```powershell
+npm --workspace frontend run build
+$env:CLOUDFLARE_API_TOKEN="<ваш токен>"
+$env:CLOUDFLARE_ACCOUNT_ID="<ваш account id>"
+npx wrangler deploy
+```
+
+Исходники edge-двойника — в папке [`worker/`](worker/), конфигурация — в
+[`wrangler.jsonc`](wrangler.jsonc).
 
 ---
 
